@@ -28,6 +28,7 @@ public class Mesh {
         positionsBuffer.put(0, positions);
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
         glBufferData(GL_ARRAY_BUFFER, positionsBuffer, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);

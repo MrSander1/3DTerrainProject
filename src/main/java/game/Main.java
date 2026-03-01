@@ -4,20 +4,21 @@ import engine.graph.*;
 import engine.scene.Scene;
 
 public class Main implements IAppLogic {
+
     public static void main(String[] args) {
         Main main = new Main();
-        Engine gameEng = new Engine("Triangle", new Window.WindowOptions(), main);
+        Engine gameEng = new Engine("chapter-03", new Window.WindowOptions(), main);
         gameEng.start();
     }
 
     @Override
     public void cleanup() {
-
+        // Nothing to be done yet
     }
 
     @Override
     public void init(Window window, Scene scene, Render render) {
-        float[] positions = new float[] {
+        float[] positions = new float[]{
                 0.0f, 0.5f, 0.0f,
                 -0.5f, -0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f
@@ -28,12 +29,12 @@ public class Main implements IAppLogic {
 
     @Override
     public void input(Window window, Scene scene, long diffTimeMillis) {
-
+        // Nothing to be done yet
     }
-
 
     @Override
     public void update(Window window, Scene scene, long diffTimeMillis) {
-
+        // Nothing to be done yet
     }
 }
+
