@@ -6,6 +6,7 @@ import java.nio.file.*;
 
 public class Utils {
     // Utility class
+}
 
 
 public static String readFile(String filePath) {
