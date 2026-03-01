@@ -8,6 +8,7 @@ import java.util.*;
 import static org.lwjgl.opengl.GL30.*;
 
 public class ShaderProgram {
+
     private final int programId;
 
     public ShaderProgram(List<ShaderModuleData> shaderModuleDataList) {
@@ -22,7 +23,16 @@ public class ShaderProgram {
         link(shaderModules);
     }
 
+    public void bind() {
+        glUseProgram(programId);
+    }
 
+    public void cleanup() {
+        unbind();
+        if (programId != 0) {
+            glDeleteProgram(programId);
+        }
+    }
 
     protected int createShader(String shaderCode, int shaderType) {
         int shaderId = glCreateShader(shaderType);
@@ -35,13 +45,11 @@ public class ShaderProgram {
 
         if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) {
             throw new RuntimeException("Error compiling Shader code: " + glGetShaderInfoLog(shaderId, 1024));
-
         }
 
         glAttachShader(programId, shaderId);
 
         return shaderId;
-
     }
 
     public int getProgramId() {
@@ -50,28 +58,16 @@ public class ShaderProgram {
 
     private void link(List<Integer> shaderModules) {
         glLinkProgram(programId);
-        if (glGetProgrami((programId), GL_LINK_STATUS) == 0) {
-            throw new RuntimeException("Error linking Shader code " + glGetProgramInfoLog(programId, 1024));
+        if (glGetProgrami(programId, GL_LINK_STATUS) == 0) {
+            throw new RuntimeException("Error linking Shader code: " + glGetProgramInfoLog(programId, 1024));
         }
 
         shaderModules.forEach(s -> glDetachShader(programId, s));
         shaderModules.forEach(GL30::glDeleteShader);
     }
 
-
-    public void bind() {
-        glUseProgram(programId);
-    }
-
     public void unbind() {
         glUseProgram(0);
-    }
-
-    public void cleanup() {
-        unbind();
-        if (programId != 0) {
-            glDeleteProgram(programId);
-        }
     }
 
     public void validate() {
@@ -82,8 +78,5 @@ public class ShaderProgram {
     }
 
     public record ShaderModuleData(String shaderFile, int shaderType) {
-
     }
-
-
 }

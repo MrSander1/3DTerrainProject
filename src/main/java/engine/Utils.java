@@ -5,18 +5,18 @@ import java.nio.file.*;
 
 
 public class Utils {
-    // Utility class
-}
+    // Utility class <- this was the issue
+    private Utils() {
 
-
-public static String readFile(String filePath) {
-    String str;
-    try {
-        str = new String(Files.readAllBytes((Paths.get(filePath))));
-    } catch(IOException excp) {
-        throw new RuntimeException("Error reading file [" + filePath + "]", excp);
     }
-    return str;
-}
 
+    public static String readFile(String filePath) {
+        String str;
+        try {
+            str = new String(Files.readAllBytes(Paths.get(filePath)));
+        } catch (IOException excp) {
+            throw new RuntimeException("Error reading file [" + filePath + "]", excp);
+        }
+        return str;
+    }
 }

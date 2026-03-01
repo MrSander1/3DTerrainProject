@@ -3,7 +3,7 @@
     <option name="ALTERNATIVE_JRE_PATH" value="openjdk-25" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <envs>
-      <env name="--enable-native-access" value="ALL-UNNAMED" />
+      <env name="--enable-native-access" value="ALL-UNNAMED " />
     </envs>
     <option name="MAIN_CLASS_NAME" value="game.Main" />
     <module name="3DTerrain.main" />

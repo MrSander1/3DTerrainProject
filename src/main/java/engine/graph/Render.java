@@ -12,6 +12,7 @@ public class Render {
 
     public Render() {
         GL.createCapabilities();
+        glClearColor(0.5f, 0.7f, 0.9f, 1.0f);
         sceneRender = new SceneRender();
     }
 
