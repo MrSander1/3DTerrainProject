@@ -6,12 +6,7 @@ import java.nio.file.*;
 
 public class Utils {
     // Utility class
-
-
-    private Utils() {
-
-    }
-
+}
 
 
 public static String readFile(String filePath) {
