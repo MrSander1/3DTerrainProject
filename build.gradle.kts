@@ -5,6 +5,7 @@ plugins {
 // 1. Define versions (replacing the Maven ${version} variables)
 val lwjglVersion = "3.4.1" // or your preferred version
 val tinylogVersion = "2.7.0"
+val jomlVersion = "1.10.8"
 
 // 2. Logic to handle the ${native.target} classifier
 val lwjglNatives = when (System.getProperty("os.name").lowercase()) {
@@ -33,4 +34,6 @@ dependencies {
     // OpenGL (Graphics)
     implementation("org.lwjgl:lwjgl-opengl:$lwjglVersion")
     runtimeOnly("org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives")
+
+    implementation("org.joml:joml:${jomlVersion}")
 }
