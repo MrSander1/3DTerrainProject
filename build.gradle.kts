@@ -6,6 +6,9 @@ plugins {
 val lwjglVersion = "3.4.1" // or your preferred version
 val tinylogVersion = "2.7.0"
 val jomlVersion = "1.10.8"
+val imguiVersion = "1.90.0"
+val nativeTarget = "windows"
+
 
 // 2. Logic to handle the ${native.target} classifier
 val lwjglNatives = when (System.getProperty("os.name").lowercase()) {
@@ -35,5 +38,11 @@ dependencies {
     implementation("org.lwjgl:lwjgl-opengl:$lwjglVersion")
     runtimeOnly("org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives")
 
+    implementation("org.lwjgl:lwjgl-stb:${lwjglVersion}")
+    runtimeOnly("org.lwjgl:lwjgl-stb:$lwjglVersion:natives-windows")
+
     implementation("org.joml:joml:${jomlVersion}")
+
+    implementation("io.github.spair:imgui-java-binding:$imguiVersion")
+    runtimeOnly("io.github.spair:imgui-java-natives-windows:$imguiVersion")
 }
