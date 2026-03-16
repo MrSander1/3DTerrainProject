@@ -30,111 +30,35 @@ public class Main implements IAppLogic, IGuiInstance {
     public void cleanup() {
         // Nothing to be done yet
     }
-
+    /* Bug in Generation methods that created a skewed plane look into that
+       also missing one quad.
+    */
     @Override
     public void init(Window window, Scene scene, Render render) {
-        float[] positions = new float[]{
-                // V0
-                -0.5f, 0.5f, 0.5f,
-                // V1
-                -0.5f, -0.5f, 0.5f,
-                // V2
-                0.5f, -0.5f, 0.5f,
-                // V3
-                0.5f, 0.5f, 0.5f,
-                // V4
-                -0.5f, 0.5f, -0.5f,
-                // V5
-                0.5f, 0.5f, -0.5f,
-                // V6
-                -0.5f, -0.5f, -0.5f,
-                // V7
-                0.5f, -0.5f, -0.5f,
 
-                // For text coords in top face
-                // V8: V4 repeated
-                -0.5f, 0.5f, -0.5f,
-                // V9: V5 repeated
-                0.5f, 0.5f, -0.5f,
-                // V10: V0 repeated
-                -0.5f, 0.5f, 0.5f,
-                // V11: V3 repeated
-                0.5f, 0.5f, 0.5f,
+        int width = 50;
+        int height = 50;
 
-                // For text coords in right face
-                // V12: V3 repeated
-                0.5f, 0.5f, 0.5f,
-                // V13: V2 repeated
-                0.5f, -0.5f, 0.5f,
+        float[] positions = positionsGen(width, height);
+        // Figure out what text coords even needs
+        /* TextCoords go from 0->1
+        * all we need is every corner of every quad thus every value
+        * though it needs proper mapping so that is annoying part
+        * Overall, for now focus on position design as the order of
+        * vertices are what matter for these coords.*/
+        float[] textCoords = textureGen(width, height);
 
-                // For text coords in left face
-                // V14: V0 repeated
-                -0.5f, 0.5f, 0.5f,
-                // V15: V1 repeated
-                -0.5f, -0.5f, 0.5f,
-
-                // For text coords in bottom face
-                // V16: V6 repeated
-                -0.5f, -0.5f, -0.5f,
-                // V17: V7 repeated
-                0.5f, -0.5f, -0.5f,
-                // V18: V1 repeated
-                -0.5f, -0.5f, 0.5f,
-                // V19: V2 repeated
-                0.5f, -0.5f, 0.5f,
-        };
-        float[] textCoords = new float[]{
-                0.0f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.5f, 0.0f,
-
-                0.0f, 0.0f,
-                0.5f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-
-                // For text coords in top face
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.0f, 1.0f,
-                0.5f, 1.0f,
-
-                // For text coords in right face
-                0.0f, 0.0f,
-                0.0f, 0.5f,
-
-                // For text coords in left face
-                0.5f, 0.0f,
-                0.5f, 0.5f,
-
-                // For text coords in bottom face
-                0.5f, 0.0f,
-                1.0f, 0.0f,
-                0.5f, 0.5f,
-                1.0f, 0.5f,
-        };
         /* (NOTE ON FACE CULLING): Indices are where the order is set, so it's very
         important to have it coded into the for loop when I eventually create the actual
         generator, though further research is required with how it
         fits into with triangle strips. Alternatively, I can try to
         do it with triangles only. Though either way I am going to have
-        to apply the strip formula.*/
-        int[] indices = new int[] {
-                // Front face
-                0, 1, 2, 2, 3, 0,
-                // Top Face
-                8, 10, 11, 11, 9, 8,
-                // Right face
-                12, 13, 7, 7, 5, 12,
-                // Left face
-                4, 6, 15, 15, 14, 4,
-                // Bottom face
-                16, 17, 19, 19, 18, 16,
-                // Back face
-                5, 7, 6, 6, 4, 5
-        };
-        Texture texture = scene.getTextureCache().createTexture("src/shaders/cube.png");
+        to apply the strip formula.
+        */
+
+        int[] indices = indicesGen(width, height);
+
+        Texture texture = scene.getTextureCache().createTexture("src/shaders/default_texture.png");
         Material material = new Material();
         material.setTexturePath(texture.getTexturePath());
         List<Material> materialList = new ArrayList<>();
@@ -154,7 +78,7 @@ public class Main implements IAppLogic, IGuiInstance {
 
     @Override
     public void drawGui() {
-        ImGui.newFrame();
+        ImGui.newFrame( );
         ImGui.setNextWindowPos(0, 0, ImGuiCond.Always);
         ImGui.showDemoWindow();
         ImGui.endFrame();
@@ -207,12 +131,81 @@ public class Main implements IAppLogic, IGuiInstance {
 
     @Override
     public void update(Window window, Scene scene, long diffTimeMillis) {
-        rotation += 1.5f;
+        rotation += 0.1f;
         if (rotation > 360) {
             rotation = 0;
         }
         cubeEntity.setRotation(1, 1, 1, (float) Math.toRadians(rotation));
         cubeEntity.updateModelMatrix();
+    }
+
+    // Generation Data - should be a nested for loop
+    public float[] positionsGen(int width, int height) {
+        int vertexCount = width * height * 3;
+
+        float[] pos = new float[vertexCount];
+        int i = 0;
+
+        for (int row = 0; row < height; row++) {
+            for (int col=0; col<width; col++) {
+                pos[i++] = (float) col;
+                pos[i++] = 0.0f; // dont forget that y is z in GL coords
+                pos[i++] = (float) row;
+            }
+        }
+
+        return pos;
+
+    }
+
+    // Texture Generation
+    public float[] textureGen(int width, int height) {
+        float[] tex = new float[width * height * 8];
+
+        int i = 0;
+        for (int j = 0; j < tex.length / 8; ++j) {
+            // Top Right (0,0)
+            tex[i++] = 0;
+            tex[i++] = 0;
+            // Bottom Right (0,1)
+            tex[i++] = 0;
+            tex[i++] = 1;
+            // Top Left (1,0)
+            tex[i++] = 1;
+            tex[i++] = 0;
+            // Bottom left (1,1)
+            tex[i++] = 1;
+            tex[i++] = 1;
+        }
+
+        return tex;
+    }
+
+    // Indices Generation
+    public int[] indicesGen(int width, int height) {
+        width++;
+
+        int i = 0;
+
+        int numberInxRow = width * 2 + 2;
+        int numberInxDegens = (height - 1) * 2;
+        int inxSize = (numberInxRow)*height+(numberInxDegens);
+        int[] inx = new int[inxSize];
+
+        for(int col = 0; col < height; ++col) {
+            int base = col * width;
+            for (int row = 0; row < width; ++row) {
+                inx[i++] = base + row;
+                inx[i++] = base + width+ row;
+            }
+            // add a degen triangle (expect for last row)
+            if(col < height - 1) {
+                inx[i++] = (col + 1) * width + (width - 1);
+                inx[i++] = (col + 1) * width + (width - 1);
+            }
+        }
+
+        return inx;
     }
 }
 

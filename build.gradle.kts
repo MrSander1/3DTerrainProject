@@ -19,6 +19,7 @@ val lwjglNatives = when (System.getProperty("os.name").lowercase()) {
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
@@ -38,11 +39,18 @@ dependencies {
     implementation("org.lwjgl:lwjgl-opengl:$lwjglVersion")
     runtimeOnly("org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives")
 
+    // Image Loader
     implementation("org.lwjgl:lwjgl-stb:${lwjglVersion}")
     runtimeOnly("org.lwjgl:lwjgl-stb:$lwjglVersion:natives-windows")
 
+    // JOML (Math)
     implementation("org.joml:joml:${jomlVersion}")
 
+    // ImGui
     implementation("io.github.spair:imgui-java-binding:$imguiVersion")
     runtimeOnly("io.github.spair:imgui-java-natives-windows:$imguiVersion")
+
+    // Noise
+    implementation("com.raylabz:opensimplex:1.0.1")
+
 }

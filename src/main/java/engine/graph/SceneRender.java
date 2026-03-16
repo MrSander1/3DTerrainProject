@@ -50,12 +50,12 @@ public class SceneRender {
                 Texture texture = textureCache.getTexture(material.getTexturePath());
                 glActiveTexture(GL_TEXTURE0);
                 texture.bind();
-
+                // change here to strip
                 for (Mesh mesh : material.getMeshList()) {
                     glBindVertexArray(mesh.getVaoId());
                     for (Entity entity : entities) {
                         uniformMap.setUniform("modelMatrix", entity.getModelMatrix());
-                        glDrawElements(GL_TRIANGLES, mesh.getNumVertices(), GL_UNSIGNED_INT, 0);
+                        glDrawElements(GL_TRIANGLE_STRIP, mesh.getNumVertices(), GL_UNSIGNED_INT, 0);
                     }
                 }
             }
