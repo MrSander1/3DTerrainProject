@@ -4,7 +4,7 @@ import java.util.*;
 
 public class TextureCache {
 
-    public static final String DEFAULT_TEXTURE = "src/shaders/default_texture.png";
+    public static final String DEFAULT_TEXTURE = "tex/default_texture.png";
 
     private Map<String, Texture> textureMap;
 
@@ -29,6 +29,7 @@ public class TextureCache {
         if (texture == null) {
             texture = textureMap.get(DEFAULT_TEXTURE);
         }
+
         return texture;
     }
 }

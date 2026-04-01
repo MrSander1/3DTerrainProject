@@ -57,9 +57,9 @@ public class Main implements IAppLogic, IGuiInstance {
         to apply the strip formula.
         */
 
-        int[] indices = indicesGen(size, subdivisions);
+        int[] indices = indicesGen(subdivisions);
 
-        Texture texture = scene.getTextureCache().createTexture("src/shaders/default_texture.png");
+        Texture texture = scene.getTextureCache().createTexture("tex/13105.jpg");
         Material material = new Material();
         material.setTexturePath(texture.getTexturePath());
         List<Material> materialList = new ArrayList<>();
@@ -150,30 +150,17 @@ public class Main implements IAppLogic, IGuiInstance {
     */
 
     // Good stackoverflow article about a simlar soultion though difference are there evidently: https://stackoverflow.com/questions/78063818/how-to-calculate-correct-normals-on-a-deformed-plane-with-fractal-brownian-motio#:~:text=Your%20program%20basically%20tries%20to,vertices%20per%20period%2C%20possibly%20higher.
-    public float fbmValues(float frequency, float amplitude, float gain, float lacunarity, int octaves, int subdivisions, float x, float y) {
-        float fbmValue = 0;
-        OpenSimplexNoise noise = new OpenSimplexNoise(12345L);
-        for (int i = 0; i < octaves; ++i){
-            fbmValue += (amplitude * (float)noise.eval(x * frequency, y * frequency));
-            frequency *= lacunarity;
-            amplitude *= gain;
-        }
-
-        return fbmValue;
-    }
-
-    public int vertexCount(float size, int subdivisions) {
+    public int vertexCount(int subdivisions) {
         return ((subdivisions) * (subdivisions)) * 3;
 
     }
 
     public float[] positionsGen(float size, int subdivisions) {
 
-        float tilewidth = size / (float)subdivisions;
+        float tilewidth = size / (float)(subdivisions - 1);
 
-        OpenSimplexNoise noise = new OpenSimplexNoise(12345L);
 
-        int vertexCount = vertexCount(size, subdivisions);
+        int vertexCount = vertexCount(subdivisions);
 
 
         float[] pos = new float[vertexCount];
@@ -193,53 +180,39 @@ public class Main implements IAppLogic, IGuiInstance {
     // Texture Generation - I think have to exclude degenerate triangles map(fbmValues(0.01f, 0.1f, 0.5f, 2.0f, 16, subdivisions, x, z), -1, 1,-10,10);;
 
     public float[] textureGen(float size, int subdivisions) {
+        int count = subdivisions * subdivisions;
+        float[] tex = new float[count * 2];
 
-        int count = vertexCount(size, subdivisions) / 3;
-
-        float[] tex = new float[count * 8];
 
 
         int i = 0;
-        for (int j = 0; j < tex.length / 8; ++j) {
-            // Top Right (0,0)
-            tex[i++] = 0;
-            tex[i++] = 0;
-            // Bottom Right (0,1)
-            tex[i++] = 0;
-            tex[i++] = 1;
-            // Top Left (1,0)
-            tex[i++] = 1;
-            tex[i++] = 0;
-            // Bottom left (1,1)
-            tex[i++] = 1;
-            tex[i++] = 1;
-        }
+        for (int z = 0; z < subdivisions; z++) {
+            for (int x = 0; x < subdivisions; x++) {
+                float u = (float) (x*size) / (subdivisions - 1);
+                float v = (float) (z*size) / (subdivisions - 1);
 
+                tex[i++] = u;
+                tex[i++] = v;
+            }
+        }
         return tex;
     }
 
-    // Indices Generation - This 100% is what is bugging out
-    public int[] indicesGen(float size, int subdivisions) {
+    // Indices Generation
+    public int[] indicesGen(int subdivisions) {
 
-        int a = 0;
-
-
-        int inxSize = (subdivisions - 1) * (subdivisions * 2);
+        int inxSize = (subdivisions - 1) * (subdivisions * 2 + 2);
         int[] inx = new int[inxSize];
 
-        for(int i = 0; i < subdivisions-1; i++)       // for each row a.k.a. each strip
-        {
-            for(int j = 0; j < subdivisions; j++)      // for each column
-            {
-                for(int k = 0; k < 2; k++)      // for each side of the strip
-                {
-                    inx[a] = (j + subdivisions * (i + k));
-                    ++a;
-                }
+        int i = 0;
+        for (int r = 0; r < subdivisions - 1; ++r) {
+            inx[i++] = r * subdivisions;
+            for (int c = 0; c < subdivisions; ++c) {
+                inx[i++] = r * subdivisions + c;
+                inx[i++] = (r + 1) * subdivisions + c;
             }
+            inx[i++] = (r + 1) * subdivisions + (subdivisions - 1);
         }
-
-
 
        return inx;
     }

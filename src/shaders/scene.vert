@@ -60,21 +60,24 @@ void main()
 {
 
     vec3 pos = position;
-    float frequency = 0.05f;
-    float amplitude = 0.2f;
+    float frequency = 0.3f;
+    float amplitude = 1.0f;
     float gain = 0.5f;
     float lacunarity = 2.0f;
-    int octaves = 16;
+    int octaves = 8;
 
     float fbmValue = 0.0f;
+    float normalization = 0.0f;
 
     for (int i = 0; i < octaves; ++i){
         fbmValue += (amplitude * noise(vec2(pos.x * frequency, pos.z * frequency)));
+        normalization += amplitude;
         frequency *= lacunarity;
         amplitude *= gain;
     }
 
-    pos.y += map(fbmValue,-1, 1,-20,20);
+    fbmValue /= normalization;
+    pos.y += map(fbmValue,-1, 1,-10,10);
 
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1.0);
     outTextCoord = texCoord;

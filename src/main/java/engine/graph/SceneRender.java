@@ -55,7 +55,7 @@ public class SceneRender {
                     glBindVertexArray(mesh.getVaoId());
                     for (Entity entity : entities) {
                         uniformMap.setUniform("modelMatrix", entity.getModelMatrix());
-                        glDrawElements(GL_LINE_STRIP, mesh.getNumVertices(), GL_UNSIGNED_INT, 0);
+                        glDrawElements(GL_TRIANGLE_STRIP, mesh.getNumVertices(), GL_UNSIGNED_INT, 0);
                         //glDrawElements(GL_TRIANGLE_STRIP, mesh.getNumVertices(), GL_UNSIGNED_INT, 0);
                     }
                 }

@@ -16,7 +16,7 @@ public class Render {
         glClearColor(0.5f, 0.7f, 0.9f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+        glCullFace(GL_FRONT);
         sceneRender = new SceneRender();
         guiRender = new GuiRender(window);
     }
