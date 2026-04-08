@@ -13,11 +13,13 @@ import java.util.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class Main implements IAppLogic, IGuiInstance {
+public class Main implements IAppLogic {
 
     private static final float MOUSE_SENSITIVITY = 0.1f;
     private static final float MOVEMENT_SPEED = 0.005f;
     private Entity planeEntity;
+    private TerrainControls terrainControls;
+    private Terrain terrain;
     private float rotation;
 
 
@@ -37,8 +39,9 @@ public class Main implements IAppLogic, IGuiInstance {
     @Override
     public void init(Window window, Scene scene, Render render) {
 
-        int subdivisions = 100;
-        float size = 10.0f;
+        int subdivisions = 1000;
+        // figure out a way to change the size through imgui.
+        float size = 20.0f;
 
         float[] positions = positionsGen(size, subdivisions);
         // Figure out what text coords even needs
@@ -71,35 +74,13 @@ public class Main implements IAppLogic, IGuiInstance {
         scene.addModel(planeModel);
 
         planeEntity = new Entity("plane-entity", planeModel.getId());
-        planeEntity.setPosition(0, -2, -10);
+        planeEntity.setPosition(0, -10, -10);
         scene.addEntity(planeEntity);
 
-        scene.setGuiInstance(this);
-    }
-
-    static public final float map(float value, float istart, float istop, float ostart, float ostop) {
-        return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
-    }
-
-    @Override
-    public void drawGui() {
-        ImGui.newFrame( );
-        ImGui.setNextWindowPos(0, 0, ImGuiCond.Always);
-        ImGui.showDemoWindow();
-        ImGui.endFrame();
-        ImGui.render();
-    }
-
-    @Override
-    public boolean handleGuiInput(Scene scene, Window window) {
-        ImGuiIO imGuiIO = ImGui.getIO();
-        MouseInput mouseInput = window.getMouseInput();
-        Vector2f mousePos = mouseInput.getCurrentPos();
-        imGuiIO.addMousePosEvent(mousePos.x, mousePos.y);
-        imGuiIO.addMouseButtonEvent(0, mouseInput.isLeftButtonPressed());
-        imGuiIO.addMouseButtonEvent(1, mouseInput.isRightButtonPressed());
-
-        return imGuiIO.getWantCaptureMouse() || imGuiIO.getWantCaptureKeyboard();
+        terrain = new Terrain( 0.3f, 0.5f, 0.5f, 2.0f, 8, 10, 10, 1.0f);
+        scene.setTerrain(terrain);
+        terrainControls = new TerrainControls(scene);
+        scene.setGuiInstance(terrainControls);
     }
 
     @Override
@@ -136,7 +117,7 @@ public class Main implements IAppLogic, IGuiInstance {
 
     @Override
     public void update(Window window, Scene scene, long diffTimeMillis) {
-        planeEntity.setRotation(1, 1, 1, (float) Math.toRadians(rotation));
+        planeEntity.setScale(terrain.getScale());
         planeEntity.updateModelMatrix();
     }
 

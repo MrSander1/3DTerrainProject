@@ -12,6 +12,7 @@ public class Scene {
     private TextureCache textureCache;
     private Camera camera;
     private IGuiInstance guiInstance;
+    private Terrain terrain;
 
     public Scene(int width, int height) {
         modelMap = new HashMap<>();
@@ -64,4 +65,14 @@ public class Scene {
     public void setGuiInstance(IGuiInstance guiInstance) {
         this.guiInstance = guiInstance;
     }
+
+    public Terrain getTerrain() {
+        return terrain;
+    }
+
+    public void setTerrain(Terrain terrain) {
+        this.terrain = terrain;
+    }
+
+
 }

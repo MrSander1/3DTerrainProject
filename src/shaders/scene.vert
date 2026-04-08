@@ -3,11 +3,24 @@
 layout (location=0) in vec3 position;
 layout (location=1) in vec2 texCoord;
 
+struct Terrain
+{
+    float frequency;
+    float amplitude;
+    float gain;
+    float lacunarity;
+    int octaves;
+    int max;
+    int min;
+};
+
 out vec2 outTextCoord;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
+// You need uniforms
 uniform mat4 modelMatrix;
+uniform Terrain terrain;
 
 // fbm goes in here
 
@@ -60,11 +73,14 @@ void main()
 {
 
     vec3 pos = position;
-    float frequency = 0.3f;
-    float amplitude = 1.0f;
-    float gain = 0.5f;
-    float lacunarity = 2.0f;
-    int octaves = 8;
+    // could cause an issue
+    float frequency = terrain.frequency;
+    float amplitude = terrain.amplitude;
+    float gain = terrain.gain;
+    float lacunarity = terrain.lacunarity;
+    int octaves = terrain.octaves;
+    int max = terrain.max;
+    int min = terrain.min;
 
     float fbmValue = 0.0f;
     float normalization = 0.0f;
@@ -77,7 +93,7 @@ void main()
     }
 
     fbmValue /= normalization;
-    pos.y += map(fbmValue,-1, 1,-10,10);
+    pos.y += map(fbmValue,-1, 1,-min,max);
 
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1.0);
     outTextCoord = texCoord;

@@ -30,6 +30,13 @@ public class SceneRender {
         uniformMap.createUniform("viewMatrix");
         uniformMap.createUniform("modelMatrix");
         uniformMap.createUniform("txtSampler");
+        uniformMap.createUniform("terrain.frequency");
+        uniformMap.createUniform("terrain.amplitude");
+        uniformMap.createUniform("terrain.gain");
+        uniformMap.createUniform("terrain.lacunarity");
+        uniformMap.createUniform("terrain.octaves");
+        uniformMap.createUniform("terrain.max");
+        uniformMap.createUniform("terrain.min");
     }
 
     public void render(Scene scene) {
@@ -40,6 +47,8 @@ public class SceneRender {
         uniformMap.setUniform("viewMatrix", scene.getCamera().getViewMatrix());
 
         uniformMap.setUniform("txtSampler", 0);
+
+        updateTerrain(scene);
 
         Collection<Model> models = scene.getModelMap().values();
         TextureCache textureCache = scene.getTextureCache();
@@ -66,6 +75,18 @@ public class SceneRender {
 
         shaderProgram.unbind();
 
+    }
+
+    private void updateTerrain(Scene scene) {
+        Terrain terrain = scene.getTerrain();
+
+        uniformMap.setUniform("terrain.frequency", terrain.getFrequency());
+        uniformMap.setUniform("terrain.amplitude", terrain.getAmplitude());
+        uniformMap.setUniform("terrain.gain", terrain.getGain());
+        uniformMap.setUniform("terrain.lacunarity", terrain.getLacunarity());
+        uniformMap.setUniform("terrain.octaves", terrain.getOctaves());
+        uniformMap.setUniform("terrain.max", terrain.getMax());
+        uniformMap.setUniform("terrain.min", terrain.getMin());
     }
 
 }
