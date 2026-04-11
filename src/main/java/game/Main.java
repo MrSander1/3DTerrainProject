@@ -15,8 +15,6 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class Main implements IAppLogic {
 
-    private static final float MOUSE_SENSITIVITY = 0.1f;
-    private static final float MOVEMENT_SPEED = 0.005f;
     private Entity planeEntity;
     private TerrainControls terrainControls;
     private Terrain terrain;
@@ -77,7 +75,7 @@ public class Main implements IAppLogic {
         planeEntity.setPosition(0, -10, -10);
         scene.addEntity(planeEntity);
 
-        terrain = new Terrain( 0.3f, 0.5f, 0.5f, 2.0f, 8, 10, 10, 1.0f);
+        terrain = new Terrain( 0.3f, 0.5f, 0.5f, 2.0f, 8, 10, 10, 1.0f, 0.05f, 0.1f);
         scene.setTerrain(terrain);
         terrainControls = new TerrainControls(scene);
         scene.setGuiInstance(terrainControls);
@@ -88,7 +86,7 @@ public class Main implements IAppLogic {
         if (inputConsumed) {
             return;
         }
-        float move = diffTimeMillis * MOVEMENT_SPEED;
+        float move = diffTimeMillis * terrain.getSpeed();
         Camera camera = scene.getCamera();
         if (window.isKeyPressed(GLFW_KEY_W)) {
             camera.moveForward(move);
@@ -109,8 +107,8 @@ public class Main implements IAppLogic {
         MouseInput mouseInput = window.getMouseInput();
         if (mouseInput.isRightButtonPressed()) {
             Vector2f displVec = mouseInput.getDisplVec();
-            camera.addRotation((float) Math.toRadians(-displVec.x * MOUSE_SENSITIVITY),
-                    (float) Math.toRadians(-displVec.y * MOUSE_SENSITIVITY));
+            camera.addRotation((float) Math.toRadians(-displVec.x * terrain.getSensitivity()),
+                    (float) Math.toRadians(-displVec.y * terrain.getSensitivity()));
         }
     }
 

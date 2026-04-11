@@ -20,13 +20,19 @@ public class Terrain {
 
     private float scale;
 
+    private float speed;
+
+    private float sensitivity;
+
     private int octaves;
 
     private int max;
 
     private int min;
 
-    public Terrain(float frequency, float amplitude, float gain, float lacunarity, int octaves, int max, int min, float scale) {
+
+
+    public Terrain(float frequency, float amplitude, float gain, float lacunarity, int octaves, int max, int min, float scale, float speed, float sensitivity ) {
         this.frequency = frequency;
         this.amplitude = amplitude;
         this.gain = gain;
@@ -35,6 +41,8 @@ public class Terrain {
         this.octaves = octaves;
         this.max = max;
         this.min = min;
+        this.speed = speed;
+        this.sensitivity = sensitivity;
     }
 
 
@@ -57,6 +65,14 @@ public class Terrain {
 
     public float getScale() {
         return scale;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public float getSensitivity() {
+        return sensitivity;
     }
 
     public int getOctaves() {
@@ -102,5 +118,13 @@ public class Terrain {
 
     public void setMin(int min) {
         this.min = min;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public void setSensitivity(float sensitivity) {
+        this.sensitivity = sensitivity;
     }
 }

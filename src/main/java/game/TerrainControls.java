@@ -17,13 +17,17 @@ public class TerrainControls implements IGuiInstance  {
 
     private float[] lacunarity;
 
+    private float[] speed;
+
+    private float[] scale;
+
+    private float[] sensitivity;
+
     private int[] octaves;
 
     private int[] max;
 
     private int[] min;
-
-    private float[] scale;
 
     public TerrainControls(Scene scene) {
         Terrain terrain = scene.getTerrain();
@@ -36,6 +40,8 @@ public class TerrainControls implements IGuiInstance  {
         max = new int[]{terrain.getMax()};
         min = new int[]{terrain.getMin()};
         scale = new float[]{terrain.getScale()};
+        speed = new float[]{terrain.getSpeed()};
+        sensitivity = new float[]{terrain.getSensitivity()};
     }
 
     @Override
@@ -53,6 +59,13 @@ public class TerrainControls implements IGuiInstance  {
             ImGui.sliderInt("Octaves", octaves, 0, 16, "%d");
             ImGui.sliderInt("Max", max,  0, 10, "%d");
             ImGui.sliderInt("Min", min,  0, 10, "%d");
+
+        }
+
+        if (ImGui.collapsingHeader("Camera Controls")) {
+            ImGui.sliderFloat("Speed", speed, 0.0001f, 0.5f, "%.4f");
+            ImGui.sliderFloat("Sensitivity", sensitivity, 0.1f, 1f, "%.2f");
+
         }
 
         ImGui.end();
@@ -81,6 +94,8 @@ public class TerrainControls implements IGuiInstance  {
             terrain.setOctaves(octaves[0]);
             terrain.setMax(max[0]);
             terrain.setMin(min[0]);
+            terrain.setSpeed(speed[0]);
+            terrain.setSensitivity(sensitivity[0]);
 
         }
         return consumed;
