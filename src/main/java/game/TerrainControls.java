@@ -23,11 +23,17 @@ public class TerrainControls implements IGuiInstance  {
 
     private float[] sensitivity;
 
+    private float[] size;
+
     private int[] octaves;
 
     private int[] max;
 
     private int[] min;
+
+    private int[] subdivisions;
+
+    public boolean consumed;
 
     public TerrainControls(Scene scene) {
         Terrain terrain = scene.getTerrain();
@@ -42,6 +48,8 @@ public class TerrainControls implements IGuiInstance  {
         scale = new float[]{terrain.getScale()};
         speed = new float[]{terrain.getSpeed()};
         sensitivity = new float[]{terrain.getSensitivity()};
+        size = new float[]{terrain.getSize()};
+        subdivisions = new int[]{terrain.getSubdivisions()};
     }
 
     @Override
@@ -59,6 +67,9 @@ public class TerrainControls implements IGuiInstance  {
             ImGui.sliderInt("Octaves", octaves, 0, 16, "%d");
             ImGui.sliderInt("Max", max,  0, 10, "%d");
             ImGui.sliderInt("Min", min,  0, 10, "%d");
+            ImGui.sliderFloat("Size", size, 0.0f, 1000.0f, "%.2f");
+            ImGui.sliderInt("Subdivisions", subdivisions,  0, 1000, "%d");
+
 
         }
 
@@ -83,7 +94,7 @@ public class TerrainControls implements IGuiInstance  {
         imGuiIO.addMouseButtonEvent(0, mouseInput.isLeftButtonPressed());
         imGuiIO.addMouseButtonEvent(1, mouseInput.isRightButtonPressed());
 
-        boolean consumed = imGuiIO.getWantCaptureMouse() || imGuiIO.getWantCaptureKeyboard();
+        consumed = imGuiIO.getWantCaptureMouse() || imGuiIO.getWantCaptureKeyboard();
         if (consumed) {
             Terrain terrain = scene.getTerrain();
             terrain.setFrequency(frequency[0]);
@@ -96,9 +107,15 @@ public class TerrainControls implements IGuiInstance  {
             terrain.setMin(min[0]);
             terrain.setSpeed(speed[0]);
             terrain.setSensitivity(sensitivity[0]);
+            terrain.setSize(size[0]);
+            terrain.setSubdivisions(subdivisions[0]);
 
         }
         return consumed;
 
+    }
+
+    public boolean getConsumed() {
+        return consumed;
     }
 }

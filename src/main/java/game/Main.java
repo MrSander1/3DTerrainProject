@@ -16,9 +16,13 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Main implements IAppLogic {
 
     private Entity planeEntity;
+    private Mesh mesh;
+    private List<Material> materialList;
+    private Texture texture;
+    private Model planeModel;
     private TerrainControls terrainControls;
     private Terrain terrain;
-    private float rotation;
+
 
 
     public static void main(String[] args) {
@@ -37,18 +41,22 @@ public class Main implements IAppLogic {
     @Override
     public void init(Window window, Scene scene, Render render) {
 
-        int subdivisions = 1000;
-        // figure out a way to change the size through imgui.
-        float size = 20.0f;
+        terrain = new Terrain( 0.3f, 0.5f, 0.5f, 2.0f, 8, 10, 10, 1.0f, 0.05f, 0.1f, 1000, 20.0f);
+        scene.setTerrain(terrain);
+        terrainControls = new TerrainControls(scene);
 
-        float[] positions = positionsGen(size, subdivisions);
+
+        // figure out a way to change the size through imgui.
+
+
+        float[] positions = positionsGen(terrain.getSize(), terrain.getSubdivisions());
         // Figure out what text coords even needs
         /* TextCoords go from 0->1
         * all we need is every corner of every quad thus every value
         * though it needs proper mapping so that is annoying part
         * Overall, for now focus on position design as the order of
         * vertices are what matter for these coords.*/
-        float[] textCoords = textureGen(size, subdivisions);
+        float[] textCoords = textureGen(terrain.getSize(), terrain.getSubdivisions());
 
         /* (NOTE ON FACE CULLING): Indices are where the order is set, so it's very
         important to have it coded into the for loop when I eventually create the actual
@@ -58,15 +66,15 @@ public class Main implements IAppLogic {
         to apply the strip formula.
         */
 
-        int[] indices = indicesGen(subdivisions);
+        int[] indices = indicesGen(terrain.getSubdivisions());
 
-        Texture texture = scene.getTextureCache().createTexture("tex/13105.jpg");
+        texture = scene.getTextureCache().createTexture("tex/13105.jpg");
         Material material = new Material();
         material.setTexturePath(texture.getTexturePath());
-        List<Material> materialList = new ArrayList<>();
+        materialList = new ArrayList<>();
         materialList.add(material);
 
-        Mesh mesh = new Mesh(positions, textCoords, indices);
+        mesh = new Mesh(positions, textCoords, indices);
         material.getMeshList().add(mesh);
         Model planeModel = new Model("plane-model", materialList);
         scene.addModel(planeModel);
@@ -75,9 +83,7 @@ public class Main implements IAppLogic {
         planeEntity.setPosition(0, -10, -10);
         scene.addEntity(planeEntity);
 
-        terrain = new Terrain( 0.3f, 0.5f, 0.5f, 2.0f, 8, 10, 10, 1.0f, 0.05f, 0.1f);
-        scene.setTerrain(terrain);
-        terrainControls = new TerrainControls(scene);
+;
         scene.setGuiInstance(terrainControls);
     }
 
@@ -117,6 +123,10 @@ public class Main implements IAppLogic {
     public void update(Window window, Scene scene, long diffTimeMillis) {
         planeEntity.setScale(terrain.getScale());
         planeEntity.updateModelMatrix();
+
+        if (terrainControls.getConsumed()) {
+            mesh.update(positionsGen(terrain.getSize(), terrain.getSubdivisions()), textureGen(terrain.getSize(), terrain.getSubdivisions()), indicesGen(terrain.getSubdivisions()));
+        }
     }
 
     // Generation Data - should be a nested for loop
