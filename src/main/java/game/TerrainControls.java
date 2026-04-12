@@ -35,6 +35,10 @@ public class TerrainControls implements IGuiInstance  {
 
     public boolean consumed;
 
+    public boolean consumed1;
+
+    public boolean consumed2;
+
     public TerrainControls(Scene scene) {
         Terrain terrain = scene.getTerrain();
 
@@ -68,9 +72,9 @@ public class TerrainControls implements IGuiInstance  {
             ImGui.sliderInt("Max", max,  0, 10, "%d");
             ImGui.sliderInt("Min", min,  0, 10, "%d");
             ImGui.sliderFloat("Size", size, 0.0f, 1000.0f, "%.2f");
+            consumed1 = ImGui.isItemActive();
             ImGui.sliderInt("Subdivisions", subdivisions,  0, 1000, "%d");
-
-
+            consumed2 = ImGui.isItemActive();
         }
 
         if (ImGui.collapsingHeader("Camera Controls")) {
@@ -116,6 +120,6 @@ public class TerrainControls implements IGuiInstance  {
     }
 
     public boolean getConsumed() {
-        return consumed;
+        return consumed1 || consumed2;
     }
 }

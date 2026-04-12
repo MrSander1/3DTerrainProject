@@ -1,8 +1,6 @@
 package game;
 
-import com.raylabz.opensimplex.OpenSimplexNoise;
 import imgui.*;
-import imgui.flag.ImGuiCond;
 import org.joml.*;
 import engine.*;
 import engine.graph.*;
@@ -24,7 +22,6 @@ public class Main implements IAppLogic {
     private Terrain terrain;
 
 
-
     public static void main(String[] args) {
         Main main = new Main();
         Engine gameEng = new Engine("3DTerrain", new Window.WindowOptions(), main);
@@ -35,9 +32,7 @@ public class Main implements IAppLogic {
     public void cleanup() {
         // Nothing to be done yet
     }
-    /* Skewed plane bug was not a bug
-       Missing triangle is probably is a textCoord issue
-    */
+
     @Override
     public void init(Window window, Scene scene, Render render) {
 
@@ -46,25 +41,9 @@ public class Main implements IAppLogic {
         terrainControls = new TerrainControls(scene);
 
 
-        // figure out a way to change the size through imgui.
-
-
         float[] positions = positionsGen(terrain.getSize(), terrain.getSubdivisions());
-        // Figure out what text coords even needs
-        /* TextCoords go from 0->1
-        * all we need is every corner of every quad thus every value
-        * though it needs proper mapping so that is annoying part
-        * Overall, for now focus on position design as the order of
-        * vertices are what matter for these coords.*/
-        float[] textCoords = textureGen(terrain.getSize(), terrain.getSubdivisions());
 
-        /* (NOTE ON FACE CULLING): Indices are where the order is set, so it's very
-        important to have it coded into the for loop when I eventually create the actual
-        generator, though further research is required with how it
-        fits into with triangle strips. Alternatively, I can try to
-        do it with triangles only. Though either way I am going to have
-        to apply the strip formula.
-        */
+        float[] textCoords = textureGen(terrain.getSize(), terrain.getSubdivisions());
 
         int[] indices = indicesGen(terrain.getSubdivisions());
 
@@ -133,7 +112,7 @@ public class Main implements IAppLogic {
 
     /*
     Create a very dense plane, im talking a lot of subdivisions so I can have detail already imbeded
-    Fbm algorithm should not be implemented in the vertex array but rather through the vertex shader
+    Fbm algorithm should not be implemented in the vertex array buvertex shader
     So overall, figure out how to make an incredibly dense plane
 
     */
@@ -187,9 +166,7 @@ public class Main implements IAppLogic {
         return tex;
     }
 
-    // Indices Generation
     public int[] indicesGen(int subdivisions) {
-
         int inxSize = (subdivisions - 1) * (subdivisions * 2 + 2);
         int[] inx = new int[inxSize];
 
