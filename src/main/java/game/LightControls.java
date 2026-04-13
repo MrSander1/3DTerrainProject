@@ -82,17 +82,17 @@ public class LightControls implements IGuiInstance {
         }
 
         if (ImGui.collapsingHeader("Point Light")) {
-            ImGui.sliderFloat("Point Light - x", pointLightX, -10.0f, 10.0f, "%.2f");
-            ImGui.sliderFloat("Point Light - y", pointLightY, -10.0f, 10.0f, "%.2f");
-            ImGui.sliderFloat("Point Light - z", pointLightZ, -10.0f, 10.0f, "%.2f");
+            ImGui.sliderFloat("Point Light - x", pointLightX, -25.0f, 25.0f, "%.2f");
+            ImGui.sliderFloat("Point Light - y", pointLightY, -25.0f, 25.0f, "%.2f");
+            ImGui.sliderFloat("Point Light - z", pointLightZ, -25.0f, 25.0f, "%.2f");
             ImGui.colorEdit3("Point Light color", pointLightColor);
             ImGui.sliderFloat("Point Light Intensity", pointLightIntensity, 0.0f, 1.0f, "%.2f");
         }
 
         if (ImGui.collapsingHeader("Spot Light")) {
-            ImGui.sliderFloat("Spot Light - x", spotLightX, -10.0f, 10.0f, "%.2f");
-            ImGui.sliderFloat("Spot Light - y", spotLightY, -10.0f, 10.0f, "%.2f");
-            ImGui.sliderFloat("Spot Light - z", spotLightZ, -10.0f, 10.0f, "%.2f");
+            ImGui.sliderFloat("Spot Light - x", spotLightX, -25.0f, 25.0f, "%.2f");
+            ImGui.sliderFloat("Spot Light - y", spotLightY, -25.0f, 25.0f, "%.2f");
+            ImGui.sliderFloat("Spot Light - z", spotLightZ, -25.0f, 25.0f, "%.2f");
             ImGui.colorEdit3("Spot Light color", spotLightColor);
             ImGui.sliderFloat("Spot Light Intensity", spotLightIntensity, 0.0f, 1.0f, "%.2f");
             ImGui.separator();

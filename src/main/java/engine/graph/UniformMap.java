@@ -60,4 +60,9 @@ public class UniformMap {
     public void setUniform(String uniformName, Vector4f value) {
         glUniform4f(getUniformLocation(uniformName), value.x, value.y, value.z, value.w);
     }
+
+    public void setUniform(String uniformName, boolean value) {
+        int val = value ? 1 : 0;
+        glUniform1i(getUniformLocation(uniformName), val);
+    }
 }

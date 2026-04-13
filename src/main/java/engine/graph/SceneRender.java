@@ -36,6 +36,7 @@ public class SceneRender {
         uniformMap.createUniform("viewMatrix");
         uniformMap.createUniform("modelMatrix");
         uniformMap.createUniform("txtSampler");
+        uniformMap.createUniform("shouldMutate");
         uniformMap.createUniform("terrain.frequency");
         uniformMap.createUniform("terrain.amplitude");
         uniformMap.createUniform("terrain.gain");
@@ -78,6 +79,7 @@ public class SceneRender {
     }
 
     public void render(Scene scene) {
+        int i = 0;
         shaderProgram.bind();
 
         uniformMap.setUniform("projectionMatrix", scene.getProjection().getProjMatrix());
@@ -106,9 +108,11 @@ public class SceneRender {
                 for (Mesh mesh : material.getMeshList()) {
                     glBindVertexArray(mesh.getVaoId());
                     for (Entity entity : entities) {
+                        boolean mutate = (i==2);
                         uniformMap.setUniform("modelMatrix", entity.getModelMatrix());
+                        uniformMap.setUniform("shouldMutate", mutate);
                         glDrawElements(GL_TRIANGLE_STRIP, mesh.getNumVertices(), GL_UNSIGNED_INT, 0);
-                        //glDrawElements(GL_TRIANGLE_STRIP, mesh.getNumVertices(), GL_UNSIGNED_INT, 0);
+                        ++i;
                     }
                 }
             }

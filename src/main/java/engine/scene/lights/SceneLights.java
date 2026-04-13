@@ -37,4 +37,6 @@ public class SceneLights {
     public void setSpotLights(List<SpotLight> spotLights) {
         this.spotLights = spotLights;
     }
+
+
 }

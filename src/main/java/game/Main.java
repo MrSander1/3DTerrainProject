@@ -1,7 +1,6 @@
 package game;
 
 import engine.scene.lights.*;
-import imgui.*;
 import org.joml.*;
 import engine.*;
 import engine.graph.*;
@@ -15,14 +14,18 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Main implements IAppLogic {
 
     private Entity planeEntity;
-    private Entity cubeEntity;
-    private Mesh mesh;
-    private List<Material> materialList;
-    private Texture texture;
-    private Model planeModel;
-    private TerrainControls terrainControls;
-    private LightControls lightControls;
+    private Entity cube1Entity;
+    private Entity cube2Entity;
+    private Mesh planeMesh;
+    private Mesh cubeMesh1;
+    private Mesh cubeMesh2;
+    private List<Material> planeMaterialList;
+    private List<Material> cube1MaterialList;
+    private List<Material> cube2MaterialList;
+    private Texture planeTexture;
+    private Texture cubeTexture;
     private Terrain terrain;
+    private SceneLights sceneLights;
     private GuiManager guiManager;
 
 
@@ -40,42 +43,115 @@ public class Main implements IAppLogic {
     @Override
     public void init(Window window, Scene scene, Render render) {
         guiManager = new GuiManager();
+
         terrain = new Terrain( 0.3f, 0.5f, 0.5f, 2.0f, 8, 10, 10, 1.0f, 0.05f, 0.1f, 1000, 20.0f);
         scene.setTerrain(terrain);
-        terrainControls = new TerrainControls(scene);
 
+        // CubE
+        float[] cubePositions = new float[] {
+                // Front face
+                -0.5f, -0.5f,  0.5f,  0.5f, -0.5f,  0.5f,  0.5f,  0.5f,  0.5f, -0.5f,  0.5f,  0.5f,
+                // Back face
+                -0.5f, -0.5f, -0.5f, -0.5f,  0.5f, -0.5f,  0.5f,  0.5f, -0.5f,  0.5f, -0.5f, -0.5f,
+                // Top face
+                -0.5f,  0.5f, -0.5f, -0.5f,  0.5f,  0.5f,  0.5f,  0.5f,  0.5f,  0.5f,  0.5f, -0.5f,
+                // Bottom face
+                -0.5f, -0.5f, -0.5f,  0.5f, -0.5f, -0.5f,  0.5f, -0.5f,  0.5f, -0.5f, -0.5f,  0.5f,
+                // Right face
+                0.5f, -0.5f, -0.5f,  0.5f,  0.5f, -0.5f,  0.5f,  0.5f,  0.5f,  0.5f, -0.5f,  0.5f,
+                // Left face
+                -0.5f, -0.5f, -0.5f, -0.5f, -0.5f,  0.5f, -0.5f,  0.5f,  0.5f, -0.5f,  0.5f, -0.5f
+        };
 
-        float[] positions = positionsGen(terrain.getSize(), terrain.getSubdivisions());
+        float[] cubeTextCoords = new float[] {
+                // Front
+                0.0f, 0.0f,  1.0f, 0.0f,  1.0f, 1.0f,  0.0f, 1.0f,
+                // Back
+                1.0f, 0.0f,  1.0f, 1.0f,  0.0f, 1.0f,  0.0f, 0.0f,
+                // Top
+                0.0f, 1.0f,  0.0f, 0.0f,  1.0f, 0.0f,  1.0f, 1.0f,
+                // Bottom
+                1.0f, 1.0f,  0.0f, 1.0f,  0.0f, 0.0f,  1.0f, 0.0f,
+                // Right
+                1.0f, 0.0f,  1.0f, 1.0f,  0.0f, 1.0f,  0.0f, 0.0f,
+                // Left
+                0.0f, 0.0f,  1.0f, 0.0f,  1.0f, 1.0f,  0.0f, 1.0f
+        };
 
-        float[] textCoords = textureGen(terrain.getSize(), terrain.getSubdivisions());
+        int[] cubeIndices = new int[] {
+                0,  1,  2,      0,  2,  3,    // Front
+                4,  5,  6,      4,  6,  7,    // Back
+                8,  9,  10,     8,  10, 11,   // Top
+                12, 13, 14,     12, 14, 15,   // Bottom
+                16, 17, 18,     16, 18, 19,   // Right
+                20, 21, 22,     20, 22, 23    // Left
+        };
 
-        int[] indices = indicesGen(terrain.getSubdivisions());
+        // Plane
+        float[] planePositions = positionsGen(terrain.getSize(), terrain.getSubdivisions());
 
-        texture = scene.getTextureCache().createTexture("tex/13105.jpg");
-        Material material = new Material();
-        material.setTexturePath(texture.getTexturePath());
-        materialList = new ArrayList<>();
-        materialList.add(material);
+        float[] planeTextCoords = textureGen(terrain.getSize(), terrain.getSubdivisions());
 
-        mesh = new Mesh(positions, textCoords, indices);
-        material.getMeshList().add(mesh);
-        Model planeModel = new Model("plane-model", materialList);
+        int[] planeIndices = indicesGen(terrain.getSubdivisions());
+
+        planeTexture = scene.getTextureCache().createTexture("tex/13105.jpg");
+        cubeTexture = scene.getTextureCache().createTexture("tex/white.jpg");
+        Material planeMaterial = new Material();
+        Material cube1Material = new Material();
+        Material cube2Material = new Material();
+        planeMaterial.setTexturePath(planeTexture.getTexturePath());
+        cube1Material.setTexturePath(cubeTexture.getTexturePath());
+        cube2Material.setTexturePath(cubeTexture.getTexturePath());
+        planeMaterialList = new ArrayList<>();
+        planeMaterialList.add(planeMaterial);
+        cube1MaterialList = new ArrayList<>();
+        cube1MaterialList.add(cube1Material);
+        cube2MaterialList = new ArrayList<>();
+        cube2MaterialList.add(cube1Material);
+
+        planeMesh = new Mesh(planePositions, planeTextCoords, planeIndices);
+        cubeMesh1 = new Mesh(cubePositions, cubeTextCoords, cubeIndices);
+        cubeMesh2 = new Mesh(cubePositions, cubeTextCoords, cubeIndices);
+        planeMaterial.getMeshList().add(planeMesh);
+        cube1Material.getMeshList().add(cubeMesh1);
+        cube2Material.getMeshList().add(cubeMesh2);
+        Model planeModel = new Model("plane-model", planeMaterialList);
+        Model cubeModel1 = new Model("cube1-model", cube1MaterialList);
+        Model cubeModel2 = new Model("cube2-model", cube2MaterialList);
         scene.addModel(planeModel);
+        scene.addModel(cubeModel1);
+        scene.addModel(cubeModel2);
 
         planeEntity = new Entity("plane-entity", planeModel.getId());
         planeEntity.setPosition(0, 0, 0);
+        planeEntity.updateModelMatrix();
         scene.addEntity(planeEntity);
+
         scene.getCamera().setPosition(5,10,15);
 
-        SceneLights sceneLights = new SceneLights();
+        sceneLights = new SceneLights();
         sceneLights.getAmbientLight().setIntensity(0.3f);
+        sceneLights.getDirLight().setPosition(1.0f, 1.0f, 1.0f);
         scene.setSceneLights(sceneLights);
         sceneLights.getPointLights().add(new PointLight(new Vector3f(1, 1, 1),
-                new Vector3f(0, 0, -1.4f), 1.0f));
+                new Vector3f(15, 10, 5), 1.0f));
+
+        cube1Entity = new Entity("cube1-entity", cubeModel1.getId());
+        cube1Entity.setPosition(sceneLights.getPointLights().get(0).getPosition().x,sceneLights.getPointLights().get(0).getPosition().y,sceneLights.getPointLights().get(0).getPosition().z);
+        cube1Entity.setScale(0.5f);
+        cube1Entity.updateModelMatrix();
+        scene.addEntity(cube1Entity);
+
 
         Vector3f coneDir = new Vector3f(0, 0, -1);
         sceneLights.getSpotLights().add(new SpotLight(new PointLight(new Vector3f(1, 1, 1),
-                new Vector3f(0, 0, -1.4f), 0.0f), coneDir, 140.0f));
+                new Vector3f(15, 10, 10), 1.0f), coneDir, 140.0f));
+
+        cube2Entity = new Entity("cube2-entity", cubeModel1.getId());
+        cube2Entity.setPosition(sceneLights.getSpotLights().get(0).getPointLight().getPosition().x,sceneLights.getSpotLights().get(0).getPointLight().getPosition().y,sceneLights.getSpotLights().get(0).getPointLight().getPosition().z);
+        cube2Entity.setScale(0.5f);
+        cube2Entity.updateModelMatrix();
+        scene.addEntity(cube2Entity);
 
         guiManager.addGui(new LightControls(scene));
         guiManager.addGui(new TerrainControls(scene));
@@ -119,11 +195,15 @@ public class Main implements IAppLogic {
     public void update(Window window, Scene scene, long diffTimeMillis) {
         planeEntity.setScale(terrain.getScale());
         planeEntity.updateModelMatrix();
+        cube1Entity.setPosition(sceneLights.getPointLights().get(0).getPosition().x,sceneLights.getPointLights().get(0).getPosition().y,sceneLights.getPointLights().get(0).getPosition().z);
+        cube1Entity.updateModelMatrix();
+        cube2Entity.setPosition(sceneLights.getSpotLights().get(0).getPointLight().getPosition().x,sceneLights.getSpotLights().get(0).getPointLight().getPosition().y,sceneLights.getSpotLights().get(0).getPointLight().getPosition().z);
+        cube2Entity.updateModelMatrix();
 
         IGuiInstance gui = scene.getGuiInstance();
 
         if (gui != null && gui.getConsumed()) {
-            mesh.update(positionsGen(terrain.getSize(), terrain.getSubdivisions()), textureGen(terrain.getSize(), terrain.getSubdivisions()), indicesGen(terrain.getSubdivisions()));
+            planeMesh.update(positionsGen(terrain.getSize(), terrain.getSubdivisions()), textureGen(terrain.getSize(), terrain.getSubdivisions()), indicesGen(terrain.getSubdivisions()));
         }
     }
 

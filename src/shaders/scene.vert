@@ -1,7 +1,7 @@
 #version 330
 
 layout (location=0) in vec3 position;
-layout (location=1) in vec2 texCoord; // change to location to 2 could cause an issue
+layout (location=1) in vec2 texCoord;
 
 struct Terrain
 {
@@ -23,6 +23,7 @@ uniform mat4 viewMatrix;
 // You need uniforms
 uniform mat4 modelMatrix;
 uniform Terrain terrain;
+uniform bool shouldMutate;
 
 // fbm goes in here
 
@@ -91,16 +92,24 @@ void main()
 {
 
     vec3 pos = position;
-    float e = 0.01; // epsilon
+    float e = 0.01;
+    vec3 normalCalculated;
+    vec3 normal = vec3(1.0, 1.0, 1.0);
 
-    pos.y += getFBM(pos);
+    if (shouldMutate) {
+        pos.y += getFBM(pos);
 
-    float hL = getFBM(pos - vec3(e, 0.0, 0.0));
-    float hR = getFBM(pos + vec3(e, 0.0, 0.0));
-    float hD = getFBM(pos - vec3(0.0, 0.0, e));
-    float hU = getFBM(pos + vec3(0.0, 0.0, e));
+        float hL = getFBM(pos - vec3(e, 0.0, 0.0));
+        float hR = getFBM(pos + vec3(e, 0.0, 0.0));
+        float hD = getFBM(pos - vec3(0.0, 0.0, e));
+        float hU = getFBM(pos + vec3(0.0, 0.0, e));
 
-    vec3 normalCalculated = normalize(vec3(hL - hR, 2.0 * e, hD - hU));
+        normalCalculated = normalize(vec3(hL - hR, 2.0 * e, hD - hU));
+    }
+    else {
+        normalCalculated = normal;
+    }
+
 
     mat4 modelViewMatrix = viewMatrix * modelMatrix;
     vec4 myPosition = modelViewMatrix * vec4(pos, 1.0);
