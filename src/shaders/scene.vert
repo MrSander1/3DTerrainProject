@@ -1,7 +1,7 @@
 #version 330
 
 layout (location=0) in vec3 position;
-layout (location=1) in vec2 texCoord;
+layout (location=1) in vec2 texCoord; // change to location to 2 could cause an issue
 
 struct Terrain
 {
@@ -15,6 +15,8 @@ struct Terrain
 };
 
 out vec2 outTextCoord;
+out vec3 outPosition;
+out vec3 outNormal;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
@@ -69,32 +71,41 @@ float map(float value, float istart, float istop, float ostart, float ostop) {
     return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
 }
 
+float getFBM(vec3 pos) {
+    float frequency = terrain.frequency;
+    float amplitude = terrain.amplitude;
+    float fbmValue = 0.0f;
+    float normalization = 0.0f;
+
+    for (int i = 0; i < terrain.octaves; ++i){
+        fbmValue += (amplitude * noise(vec2(pos.x * frequency, pos.z * frequency)));
+        normalization += amplitude;
+        frequency *= terrain.lacunarity;
+        amplitude *= terrain.gain;
+    }
+    fbmValue /= normalization;
+    return map(fbmValue, -1.0, 1.0, -float(terrain.min), float(terrain.max));
+}
+
 void main()
 {
 
     vec3 pos = position;
-    // could cause an issue
-    float frequency = terrain.frequency;
-    float amplitude = terrain.amplitude;
-    float gain = terrain.gain;
-    float lacunarity = terrain.lacunarity;
-    int octaves = terrain.octaves;
-    int max = terrain.max;
-    int min = terrain.min;
+    float e = 0.01; // epsilon
 
-    float fbmValue = 0.0f;
-    float normalization = 0.0f;
+    pos.y += getFBM(pos);
 
-    for (int i = 0; i < octaves; ++i){
-        fbmValue += (amplitude * noise(vec2(pos.x * frequency, pos.z * frequency)));
-        normalization += amplitude;
-        frequency *= lacunarity;
-        amplitude *= gain;
-    }
+    float hL = getFBM(pos - vec3(e, 0.0, 0.0));
+    float hR = getFBM(pos + vec3(e, 0.0, 0.0));
+    float hD = getFBM(pos - vec3(0.0, 0.0, e));
+    float hU = getFBM(pos + vec3(0.0, 0.0, e));
 
-    fbmValue /= normalization;
-    pos.y += map(fbmValue,-1, 1,-min,max);
+    vec3 normalCalculated = normalize(vec3(hL - hR, 2.0 * e, hD - hU));
 
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1.0);
+    mat4 modelViewMatrix = viewMatrix * modelMatrix;
+    vec4 myPosition = modelViewMatrix * vec4(pos, 1.0);
+    gl_Position = projectionMatrix * myPosition;
+    outPosition = myPosition.xyz;
+    outNormal = normalize(modelViewMatrix * vec4(normalCalculated, 0.0)).xyz;
     outTextCoord = texCoord;
 }

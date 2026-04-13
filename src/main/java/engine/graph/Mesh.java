@@ -35,6 +35,7 @@ public class Mesh {
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 
+
         // Texture VBO
         vboId = glGenBuffers();
         vboIdList.add(vboId);
@@ -42,7 +43,7 @@ public class Mesh {
         textCoordsBuffer.put(0, textCoords);
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
         glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
         // Index VBO
@@ -80,6 +81,7 @@ public class Mesh {
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 
+
         // Texture VBO
         vboId = glGenBuffers();
         vboIdList.add(vboId);
@@ -88,7 +90,7 @@ public class Mesh {
         textCoordsBuffer.put(0, textCoords);
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
         glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
         // Index VBO

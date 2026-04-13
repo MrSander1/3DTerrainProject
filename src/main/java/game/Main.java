@@ -1,5 +1,6 @@
 package game;
 
+import engine.scene.lights.*;
 import imgui.*;
 import org.joml.*;
 import engine.*;
@@ -14,12 +15,15 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Main implements IAppLogic {
 
     private Entity planeEntity;
+    private Entity cubeEntity;
     private Mesh mesh;
     private List<Material> materialList;
     private Texture texture;
     private Model planeModel;
     private TerrainControls terrainControls;
+    private LightControls lightControls;
     private Terrain terrain;
+    private GuiManager guiManager;
 
 
     public static void main(String[] args) {
@@ -35,7 +39,7 @@ public class Main implements IAppLogic {
 
     @Override
     public void init(Window window, Scene scene, Render render) {
-
+        guiManager = new GuiManager();
         terrain = new Terrain( 0.3f, 0.5f, 0.5f, 2.0f, 8, 10, 10, 1.0f, 0.05f, 0.1f, 1000, 20.0f);
         scene.setTerrain(terrain);
         terrainControls = new TerrainControls(scene);
@@ -59,11 +63,24 @@ public class Main implements IAppLogic {
         scene.addModel(planeModel);
 
         planeEntity = new Entity("plane-entity", planeModel.getId());
-        planeEntity.setPosition(0, -10, -10);
+        planeEntity.setPosition(0, 0, 0);
         scene.addEntity(planeEntity);
+        scene.getCamera().setPosition(5,10,15);
 
-;
-        scene.setGuiInstance(terrainControls);
+        SceneLights sceneLights = new SceneLights();
+        sceneLights.getAmbientLight().setIntensity(0.3f);
+        scene.setSceneLights(sceneLights);
+        sceneLights.getPointLights().add(new PointLight(new Vector3f(1, 1, 1),
+                new Vector3f(0, 0, -1.4f), 1.0f));
+
+        Vector3f coneDir = new Vector3f(0, 0, -1);
+        sceneLights.getSpotLights().add(new SpotLight(new PointLight(new Vector3f(1, 1, 1),
+                new Vector3f(0, 0, -1.4f), 0.0f), coneDir, 140.0f));
+
+        guiManager.addGui(new LightControls(scene));
+        guiManager.addGui(new TerrainControls(scene));
+
+        scene.setGuiInstance(guiManager);
     }
 
     @Override
@@ -103,7 +120,9 @@ public class Main implements IAppLogic {
         planeEntity.setScale(terrain.getScale());
         planeEntity.updateModelMatrix();
 
-        if (terrainControls.getConsumed()) {
+        IGuiInstance gui = scene.getGuiInstance();
+
+        if (gui != null && gui.getConsumed()) {
             mesh.update(positionsGen(terrain.getSize(), terrain.getSubdivisions()), textureGen(terrain.getSize(), terrain.getSubdivisions()), indicesGen(terrain.getSubdivisions()));
         }
     }
@@ -156,8 +175,8 @@ public class Main implements IAppLogic {
         int i = 0;
         for (int z = 0; z < subdivisions; z++) {
             for (int x = 0; x < subdivisions; x++) {
-                float u = (float) (x*size) / (subdivisions - 1);
-                float v = (float) (z*size) / (subdivisions - 1);
+                float u = (x*size) / (subdivisions - 1);
+                float v = (z*size) / (subdivisions - 1);
 
                 tex[i++] = u;
                 tex[i++] = v;
@@ -182,5 +201,6 @@ public class Main implements IAppLogic {
 
        return inx;
     }
+
 }
 

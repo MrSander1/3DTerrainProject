@@ -49,9 +49,15 @@ public class UniformMap {
         glUniform1f(getUniformLocation(uniformName), value);
     }
 
-
-
     public void setUniform(String uniformName, Vector2f value) {
         glUniform2f(getUniformLocation(uniformName), value.x, value.y);
+    }
+
+    public void setUniform(String uniformName, Vector3f value) {
+        glUniform3f(getUniformLocation(uniformName), value.x, value.y, value.z);
+    }
+
+    public void setUniform(String uniformName, Vector4f value) {
+        glUniform4f(getUniformLocation(uniformName), value.x, value.y, value.z, value.w);
     }
 }

@@ -2,6 +2,7 @@ package engine.scene;
 
 import engine.IGuiInstance;
 import engine.graph.*;
+import engine.scene.lights.*;
 
 import java.util.*;
 
@@ -13,6 +14,7 @@ public class Scene {
     private Camera camera;
     private IGuiInstance guiInstance;
     private Terrain terrain;
+    private SceneLights sceneLights;
 
     public Scene(int width, int height) {
         modelMap = new HashMap<>();
@@ -72,6 +74,14 @@ public class Scene {
 
     public void setTerrain(Terrain terrain) {
         this.terrain = terrain;
+    }
+
+    public SceneLights getSceneLights() {
+        return sceneLights;
+    }
+
+    public void setSceneLights(SceneLights sceneLights) {
+        this.sceneLights = sceneLights;
     }
 
 

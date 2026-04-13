@@ -58,9 +58,6 @@ public class TerrainControls implements IGuiInstance  {
 
     @Override
     public void drawGui() {
-        ImGui.newFrame();
-        ImGui.setNextWindowPos(0, 0, ImGuiCond.Once);
-        ImGui.setNextWindowSize(450, 400);
 
         ImGui.begin("Terrain controls");
         if (ImGui.collapsingHeader("Terrain")) {
@@ -73,7 +70,7 @@ public class TerrainControls implements IGuiInstance  {
             ImGui.sliderInt("Min", min,  0, 10, "%d");
             ImGui.sliderFloat("Size", size, 0.0f, 1000.0f, "%.2f");
             consumed1 = ImGui.isItemActive();
-            ImGui.sliderInt("Subdivisions", subdivisions,  0, 1000, "%d");
+            ImGui.sliderInt("Subdivisions", subdivisions,  1, 1000, "%d");
             consumed2 = ImGui.isItemActive();
         }
 
@@ -84,8 +81,6 @@ public class TerrainControls implements IGuiInstance  {
         }
 
         ImGui.end();
-        ImGui.endFrame();
-        ImGui.render();
 
     }
 
@@ -118,7 +113,7 @@ public class TerrainControls implements IGuiInstance  {
         return consumed;
 
     }
-
+    @Override
     public boolean getConsumed() {
         return consumed1 || consumed2;
     }
