@@ -50,7 +50,4 @@ dependencies {
     implementation("io.github.spair:imgui-java-binding:$imguiVersion")
     runtimeOnly("io.github.spair:imgui-java-natives-windows:$imguiVersion")
 
-    // Noise
-    implementation("com.raylabz:opensimplex:1.0.1")
-
 }
