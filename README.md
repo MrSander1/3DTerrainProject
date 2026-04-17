@@ -9,7 +9,7 @@ A Java-based 3D procedural terrain generator built using LWJGL (Lightweight Java
 
 ----
 
-![Screenshot]
+![Screenshot](tex/terrain.png)
 
 ----
 
