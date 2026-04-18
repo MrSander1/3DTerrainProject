@@ -20,7 +20,7 @@ A Java-based 3D procedural terrain generator built using LWJGL (Lightweight Java
     - WASD for camera movement.
     - Press right-click to move the camera with the mouse.
 - **Tech Stack**:
-    - Java 21
+    - Java 25
     - LWJGL for OpenGL rendering
     - Built with Gradle
 
