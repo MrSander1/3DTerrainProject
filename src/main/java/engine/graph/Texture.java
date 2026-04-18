@@ -1,7 +1,10 @@
 package engine.graph;
 
+import java.io.InputStream;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
+import java.io.IOException;
 import java.nio.*;
 
 import static org.lwjgl.opengl.GL30.*;
@@ -17,22 +20,37 @@ public class Texture {
         generateTexture(width, height, buf);
     }
 
-    public Texture(String texturePath) {
+    public Texture(String resourcePath) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            this.texturePath = texturePath;
+            this.texturePath = resourcePath;
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             IntBuffer channels = stack.mallocInt(1);
 
-            ByteBuffer buf = stbi_load(texturePath, w, h, channels, 4);
+            ByteBuffer buffer;
+            try (InputStream is = Texture.class.getResourceAsStream("/" + resourcePath)) {
+                if (is == null) {
+                    throw new RuntimeException("Image file [" + resourcePath + "] not found.");
+                }
+                byte[] bytes = is.readAllBytes();
+                buffer = MemoryUtil.memAlloc(bytes.length);
+                buffer.put(bytes).flip();
+            } catch (IOException e) {
+                throw new RuntimeException("Error reading texture stream", e);
+            }
+
+
+            ByteBuffer buf = stbi_load_from_memory(buffer, w, h, channels, 4);
+            MemoryUtil.memFree(buffer);
+
             if (buf == null) {
-                throw new RuntimeException("Image file [" + texturePath + "] not loaded: " + stbi_failure_reason());
+                throw new RuntimeException("Image file [" + resourcePath + "] not loaded: " + stbi_failure_reason());
             }
 
             int width = w.get();
             int height = h.get();
 
-            generateTexture(width,height,buf);
+            generateTexture(width, height, buf);
 
             stbi_image_free(buf);
         }

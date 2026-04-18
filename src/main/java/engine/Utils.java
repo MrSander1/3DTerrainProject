@@ -10,13 +10,14 @@ public class Utils {
 
     }
 
-    public static String readFile(String filePath) {
-        String str;
-        try {
-            str = new String(Files.readAllBytes(Paths.get(filePath)));
-        } catch (IOException excp) {
-            throw new RuntimeException("Error reading file [" + filePath + "]", excp);
+    public static String readFile(String resourcePath) {
+        try (var is = Utils.class.getResourceAsStream("/" + resourcePath)) {
+            if (is == null) {
+                throw new RuntimeException("Could not find file: " + resourcePath);
+            }
+            return new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+        } catch (java.io.IOException excp) {
+            throw new RuntimeException("Error reading resource [" + resourcePath + "]", excp);
         }
-        return str;
     }
 }

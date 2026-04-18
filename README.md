@@ -9,7 +9,7 @@ A Java-based 3D procedural terrain generator built using LWJGL (Lightweight Java
 
 ----
 
-![Screenshot]
+![Screenshot](pics/terrain3.PNG)
 
 ----
 
@@ -23,3 +23,26 @@ A Java-based 3D procedural terrain generator built using LWJGL (Lightweight Java
     - Java 21
     - LWJGL for OpenGL rendering
     - Built with Gradle
+
+## How to Run
+1. Download the `3DTerrain.jar` from the **Releases** tab.
+2. Make sure to install Java 21+
+3. Run with: `java -jar 3DTerrain.jar`
+
+## How to build 
+1. Clone the repo: `git clone https://github.com/MrSander1/3DTerrainProject`
+2. Run the project: `.\gradlew run`
+3. Create your own JAR: `.\gradlew jar`
+
+## Customization
+If you are building, I recommend looking at Terrain Controls and Light Controls it is in these two classes where you will find the controls.
+From here, you can change the minimum and maximums for most values. Play around with it, my values are simply optimized for the most simple usability, 
+you might be able to find some more interesting terrain than what is provided by the set values if you do. 
+
+## Pictures
+
+![Screenshot](pics/terrain2.PNG)
+![Screenshot](pics/terrain.PNG)
+![Screenshot](pics/terrain4.PNG)
+![Screenshot](pics/terrain5.PNG)
+

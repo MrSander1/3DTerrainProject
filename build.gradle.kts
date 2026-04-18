@@ -17,6 +17,15 @@ val lwjglNatives = when (System.getProperty("os.name").lowercase()) {
     else -> "natives-windows"
 }
 
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "game.Main"
+    }
+    // This packs all your libraries (LWJGL) into the JAR
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 repositories {
     mavenCentral()
     maven { url = uri("https://jitpack.io") }
@@ -49,5 +58,5 @@ dependencies {
     // ImGui
     implementation("io.github.spair:imgui-java-binding:$imguiVersion")
     runtimeOnly("io.github.spair:imgui-java-natives-windows:$imguiVersion")
-
 }
+

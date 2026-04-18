@@ -66,13 +66,17 @@ public class TerrainControls implements IGuiInstance  {
             ImGui.sliderFloat("Gain", gain, 0.0f, 1.0f, "%.2f");
             ImGui.sliderFloat("Lacunarity", lacunarity, 0.0f, 4.0f, "%.2f");
             ImGui.sliderInt("Octaves", octaves, 0, 16, "%d");
-            ImGui.sliderInt("Max", max,  0, 10, "%d");
-            ImGui.sliderInt("Min", min,  0, 10, "%d");
+            ImGui.sliderInt("Max", max, 0, 10, "%d");
+            ImGui.sliderInt("Min", min, 0, 10, "%d");
+        }
+
+        if (ImGui.collapsingHeader("Terrain (CAREFUL -> HIGH VALUES CAN IMPACT FRAMERATE)")) {
             ImGui.sliderFloat("Size", size, 0.0f, 1000.0f, "%.2f");
             consumed1 = ImGui.isItemActive();
-            ImGui.sliderInt("Subdivisions", subdivisions,  1, 1000, "%d");
+            ImGui.sliderInt("Subdivisions", subdivisions, 1, 5000, "%d");
             consumed2 = ImGui.isItemActive();
         }
+
 
         if (ImGui.collapsingHeader("Camera Controls")) {
             ImGui.sliderFloat("Speed", speed, 0.0001f, 0.5f, "%.4f");
